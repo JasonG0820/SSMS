@@ -1,0 +1,22 @@
+
+Libname nickname META LIBRARY='GADailyCopy';
+
+proc sql;
+create table ClaimsNumber as  /* create table  */
+select distinct 
+  apf.textvalue As PolicyNumber
+, apo.PolicyNumber As ClaimNumber
+, asf2.textvalue As CauseCode
+, asf.textvalue As CauseCategory
+
+from nickname.AsPolicy apo  /* assign new name = apo */  
+inner join nickname.AsPolicyField apf on apf.PolicyGUID = apo.PolicyGUID       /* AsPolicyField = AsPolicy */
+inner join nickname.AsSegment ase on ase.PolicyGUID = apo.PolicyGUID           /* AsSegment = AsPolicy */
+inner join nickname.AsSegmentField asf on asf.SegmentGUID = ase.SegmentGUID    /* AsSegmentField = AsSegment */
+inner join nickname.AsSegmentField asf2 on asf2.SegmentGUID = ase.SegmentGUID    /*  AsSegmentField = AsSegment */
+
+where 
+    asf.FieldName = 'CauseCategoryDeath'
+and asf2.FieldName = 'CauseCodeDeath' 
+and apf.TextValue in ('874132906', '914909806');
+quit;
